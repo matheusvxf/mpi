@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Node.h"
+#include "Matrix.h"
 
 class ClientNode : public Node {
 

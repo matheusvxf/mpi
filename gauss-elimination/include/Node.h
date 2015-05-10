@@ -1,6 +1,10 @@
 #pragma once
 
+#include <algorithm>
+
+#include "mpi.h"
 #include "Common.h"
+#include "Matrix.h"
 
 class Node {
 public:

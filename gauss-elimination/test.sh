@@ -1,2 +1,2 @@
 make
-mpirun -np 3 ./code < test.txt
+mpirun -np 3 bin/code < test.txt

@@ -1,5 +1,7 @@
 #pragma once
 
+#include <iostream>
+
 #include "Node.h"
 
 class ServerNode : public Node {
