@@ -1,5 +1,9 @@
 #pragma once
 
+#include <cstring>
+#include <string>
+#include <sstream>
+
 class Matrix {
   public:
   
