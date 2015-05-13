@@ -1,7 +1,7 @@
 CXX=mpic++
 CFLAGS=-Wall -std=c++11
 
-DEPS=Matrix.h Node.h ClientNode.h ServerNode.h Common.h
+DEPS=Matrix.h Node.h ClientNode.h ServerNode.h Common.h TestFramework.h
 
 IDIR=include .
 
@@ -15,10 +15,7 @@ BDIR=bin
 
 INCLUDES= $(foreach d, $(IDIR), -I$d)
 
-_SRC=Matrix.cpp Node.cpp ClientNode.cpp ServerNode.cpp code.cpp
-SRC = $(patsubst %, $(SDIR)/%, $(_OBJ))
-
-_OBJ = Matrix.o Node.o ClientNode.o ServerNode.o code.o
+_OBJ = Matrix.o Node.o ClientNode.o ServerNode.o code.o TestFramework.o
 OBJ = $(patsubst %, $(ODIR)/%, $(_OBJ))
 
 OBJS=$(_SRC:.cpp=.o)
