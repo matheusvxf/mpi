@@ -1,5 +1,6 @@
 #pragma once
 
+#include <algorithm>
 #include <cstring>
 #include <string>
 #include <sstream>
@@ -67,5 +68,10 @@ class Matrix {
     
     memcpy(matrix_, pointer + sizeof(n_) + sizeof(m_), n_ * m_ * sizeof(*matrix_));
     delete[]pointer;
-  }
+  }  
+  
 };
+
+// Public functions for testing
+extern void GaussElimination(Matrix &m);
+
