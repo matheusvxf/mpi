@@ -1,4 +1,5 @@
 #include "ServerNode.h"
+#include "TestFramework.h"
 
 bool ServerNode::ReadInput(){
   int n, m;
@@ -58,23 +59,25 @@ void ServerNode::GaussElimination(){
   }
   
   Join();
-  matrix_.print("Result:");
 }
 
 void ServerNode::Run(){
 	int buffer = 0;
+	
+	printf("Server Running\n");
 #if(DEBUG == true)
 	printf("Server %d k_min %d k_max %d\n", rank_, k_min_, k_max_);
 #endif
 
   while(ReadInput()){
-  	Matrix solution_2 = matrix_;
+  	Matrix solution_2 = matrix_.clone();
   	matrix_.print("---------------------\nInput:");
     BroadcastInput();
 		Init();
 		
 		GaussElimination();
 		Test::GaussElimination(solution_2);
+ 	 	solution_2.print("Result:");
 		if(matrix_ == solution_2)
 			printf("Equal\n");
   }

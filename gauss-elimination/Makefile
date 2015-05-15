@@ -15,7 +15,7 @@ BDIR=bin
 
 INCLUDES= $(foreach d, $(IDIR), -I$d)
 
-_OBJ = Matrix.o Node.o ClientNode.o ServerNode.o code.o TestFramework.o
+_OBJ = Matrix.o Node.o ClientNode.o ServerNode.o TestFramework.o
 OBJ = $(patsubst %, $(ODIR)/%, $(_OBJ))
 
 OBJS=$(_SRC:.cpp=.o)
@@ -25,11 +25,16 @@ $(ODIR)/%.o:$(SDIR)/%.cpp
 
 TARGET = code
 
-all: $(TARGET)
+TARGET_TESTGEN = testgen
 
-$(TARGET): $(OBJ)
+all: $(TARGET) $(TARGET_TESTGEN)
+
+$(TARGET): $(OBJ) $(ODIR)/code.o
 	$(CXX) $(CFLAGS) $(INCLUDES) -o $(BDIR)/$@ $^ 
-	
+
+$(TARGET_TESTGEN): $(OBJ) $(ODIR)/TestGen.o
+	$(CXX) $(CFLAGS) $(INCLUDES) -o $(BDIR)/$@ $^
+
 .PHONY: depend clean
 	
 clean:

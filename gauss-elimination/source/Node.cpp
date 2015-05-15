@@ -20,8 +20,6 @@ int Node::Tournment() {
 			abs_max = std::abs(matrix_[i][0]);
 		}
 	}
-
-	//printf("Node %d: reduce %f\n", reduce.rank, reduce.pivo);
 	
 	MPI::COMM_WORLD.Reduce(&reduce, &result, 1, MPI_FLOAT_INT, MPI_MAXLOC, ROOT);
   MPI::COMM_WORLD.Bcast(&result, 1, MPI_FLOAT_INT, ROOT);
@@ -45,8 +43,6 @@ void Node::SwapRows(int dst, int src){
   int num_columns = matrix_.getNumColumns();
   int dst_rank = RankOfOwner(dst);
   int src_rank = RankOfOwner(src);
-  
-  //printf("Swap %d %d\n", dst_rank, src_rank);
   
   if(dst_rank == rank_ && src_rank == rank_) {
     float *tmp = new float[num_columns];
