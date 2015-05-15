@@ -1,6 +1,7 @@
 #include "Matrix.h"
 
 #include <sstream>
+#include <iostream>
 
 Matrix::Matrix(const Matrix* matrix){
 	n_ = matrix->n_;
@@ -40,7 +41,13 @@ std::string Matrix::toString(){
 }
 
 void Matrix::print(const char *c) {
-  printf("%s\n%s\n", c, toString().c_str());
+ 	std::cerr << c << std::endl;
+ 	
+ 	for(int i = 0; i < n_; ++i){
+		for(int j = 0; j < m_ - 1; ++j)
+			std::cerr << matrix_[i * m_ + j] << " ";
+		std::cerr << matrix_[i * m_ + m_ - 1] << std::endl;
+	}
 }
 
 bool Matrix::operator==(const Matrix& m) const {

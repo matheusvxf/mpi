@@ -7,7 +7,7 @@
 static int Tournment(Matrix& m, int k = 0);
 
 int Tournment(Matrix& m, int k){
-  int line = 0;
+  int line = k;
   float max = std::abs(m[k][k]);
   
   for(int i = k + 1; i < m.getNumLines(); ++i){
@@ -20,16 +20,6 @@ int Tournment(Matrix& m, int k){
   return line;
 }
 
-void SwapLine(Matrix& m, int src, int dst){
-	Matrix::Line tmp = m[src];
-	
-	printf("%d %d\n", src, dst);
-	m.print("before\n");
-	m[src] = m[dst];
-	m[dst] = tmp;
-	m.print("after\n");
-}
-
 void Test::GenerateTest(int num_test){
 	std::fstream fs;
 	fs.open("test_2.txt", std::fstream::out);
@@ -37,7 +27,7 @@ void Test::GenerateTest(int num_test){
 	printf("Generate %d test(s)\n", num_test);
 	
 	while(num_test--){
-		int n = rand() % 10 + 1, m = rand() % 10 + 1;
+		int n = rand() % 10 + 1, m = n + rand() % 10 + 1;
 		
 		fs << n << " " << m << std::endl;
 		for(int i = 0; i < n; ++i){
@@ -61,24 +51,24 @@ void Test::GaussElimination(Matrix &m){
 	  int pivo = Tournment(m, k);
   
 		if(std::abs(m[pivo][k]) < PRECISION) {
+			m[pivo][k] = 0.0f; // Conformance with the distributed algorithm
 		  printf("Matrix is singular!\n");
 		  return;
 		}
 		
-		printf("Pivo %d\n", pivo);
-		m.print();
-		m.SwapLines(pivo, k);
-		m.print();
+		if(pivo != k)
+			m.SwapLines(pivo, k);
     
-    for(int j = k; j < num_columns; ++j){
-      m[k][j] /= m[k][k];
+    for(int j = num_columns - 1; j >= k; --j){
+      m[k][j] = m[k][j] / m[k][k];
     }
      
     for(int i = 0; i < num_lines; ++i){
       if(i != k) {
-        for(int j = k; j < num_columns; ++j){
-          m[i][j] = m[i][j] - m[k][j] * m[i][k] / m[k][k];
+        for(int j = k + 1; j < num_columns; ++j){
+          m[i][j] = m[i][j] - m[k][j] * m[i][k];
         }
+        m[i][k] = 0.0f;
       }
     }
   }

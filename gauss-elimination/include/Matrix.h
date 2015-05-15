@@ -60,10 +60,10 @@ class Matrix {
     
     std::fill(matrix_, matrix_ + n_ * m_, 0);
   }
-  
-  /*inline const float* operator[](int line) const{
+ 
+  inline const float* operator[](int line) const{
   	return matrix_ + line * m_;
-  }*/
+  }
   
   inline float* operator[](int line){
     return matrix_ + line * m_;
@@ -72,6 +72,7 @@ class Matrix {
 	void SwapLines(int line_1, int line_2);
   
   bool operator==(const Matrix& m) const;
+  bool operator!=(const Matrix& m) const { return !(operator==(m)); }
   inline int getNumLines() const { return n_; }
   inline int getNumColumns() const { return m_; }
   inline float* getLine(int line) const { return matrix_ + line * m_; }

@@ -7,17 +7,17 @@ void Node::Init() {
   k_max_ = std::min(delta_k_ * (rank_ + 1), k_limit_);
 }
 
-int Node::Tournment() {
+int Node::Tournment(int k) {
 	TournmentReduce reduce, result;
 	int &i_max = reduce.rank;
 	float &abs_max = reduce.pivo;
 	
 	i_max = -1;
-	abs_max = 0.0f;
-	for(int i = k_min_; i < k_max_; ++i){
-		if(std::abs(matrix_[i][0]) > abs_max){
+	abs_max = -1.0f;
+	for(int i = std::max(k_min_, k); i < std::max(k_max_, k); ++i){
+		if(std::abs(matrix_[i][k]) > abs_max){
 			i_max = i;
-			abs_max = std::abs(matrix_[i][0]);
+			abs_max = std::abs(matrix_[i][k]);
 		}
 	}
 	
@@ -43,17 +43,14 @@ void Node::SwapRows(int dst, int src){
   int num_columns = matrix_.getNumColumns();
   int dst_rank = RankOfOwner(dst);
   int src_rank = RankOfOwner(src);
+  int num_bytes = num_columns * sizeof(matrix_[0][0]);
+  
+  if(dst == src)
+  	return;
   
   if(dst_rank == rank_ && src_rank == rank_) {
-    float *tmp = new float[num_columns];
-    float *line_dst = matrix_[dst];
-    float *line_src = matrix_[src];
+    matrix_.SwapLines(src, dst);
     
-    memcpy(tmp, line_dst, num_columns * sizeof(line_dst[0]));
-    memcpy(line_dst, line_src, num_columns * sizeof(line_dst[0]));
-    memcpy(line_src, tmp, num_columns * sizeof(line_dst[0]));
-    
-    delete[]tmp;
   } else if(dst_rank == rank_) {
     float *line_dst = matrix_[dst];
     float *line_src = new float[num_columns];
@@ -61,7 +58,7 @@ void Node::SwapRows(int dst, int src){
     MPI::COMM_WORLD.Recv(line_src, num_columns, MPI_FLOAT, src_rank, 0);
     MPI::COMM_WORLD.Send(line_dst, num_columns, MPI_FLOAT, src_rank, 0);
     
-    memcpy(line_dst, line_src, num_columns * sizeof(line_dst[0]));
+    memcpy(line_dst, line_src, num_bytes);
     
     delete[]line_src;
   } else if(src_rank == rank_) {
@@ -77,15 +74,17 @@ void Node::RequestPivot(int k) {
   int pivot_rank = RankOfOwner(k);
   
   if(pivot_rank == rank_){
-    float a_kk = matrix_[k][k];
     
-    if(abs(a_kk) < 1e-6)
-      matrix_[k][k] = 0.0f;
-    else
-      for(int j = k; j < num_columns; ++j)
-        matrix_[k][j] /= a_kk;
-  
-    MPI::COMM_WORLD.Bcast(matrix_[k], num_columns, MPI_FLOAT, pivot_rank);
+    if(std::abs(matrix_[k][k]) < PRECISION){
+      matrix_[k][k] = 0.0f; // To signal singular matrix and stop
+      MPI::COMM_WORLD.Bcast(matrix_[k], num_columns, MPI_FLOAT, pivot_rank);
+    } else {
+      for(int j = num_columns - 1; j >= k; --j) // Back forward to change m[k][k] at end
+        matrix_[k][j] /= matrix_[k][k];
+      
+	    MPI::COMM_WORLD.Bcast(matrix_[k], num_columns, MPI_FLOAT, pivot_rank);
+  	}
+  		
   } else{
     float *my_line = matrix_[k];
     
@@ -99,7 +98,7 @@ void Node::Compute(int k) {
   for(int i = k_min_; i < k_max_; ++i){
     if(i != k){
       for(int j = k + 1; j < num_columns; ++j){
-        matrix_[i][j] = matrix_[i][j] - matrix_[k][j] * (matrix_[i][k] / matrix_[k][k]);
+        matrix_[i][j] = matrix_[i][j] - matrix_[k][j] * matrix_[i][k];
       }
       matrix_[i][k] = 0.0f;
     }

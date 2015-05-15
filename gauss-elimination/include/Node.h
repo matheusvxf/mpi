@@ -43,17 +43,10 @@ protected:
   int k_max_;
   
   void Init();
-  int Tournment();
+  int Tournment(int k);
   int RankOfOwner(int k);
   void SwapRows(int dst, int src);
   void RequestPivot(int k);
   void Compute(int k);
   void Join();
-  
-#if(DEBUG == true)
-#define JoinDebug() Join(); matrix_.print();
-#else
-#define JoinDebug() {}
-#endif
-
 };

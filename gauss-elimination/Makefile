@@ -1,5 +1,5 @@
 CXX=mpic++
-CFLAGS=-Wall -std=c++11
+CFLAGS=-Wall -std=c++11 -g
 
 DEPS=Matrix.h Node.h ClientNode.h ServerNode.h Common.h TestFramework.h
 
@@ -34,6 +34,8 @@ $(TARGET): $(OBJ) $(ODIR)/code.o
 
 $(TARGET_TESTGEN): $(OBJ) $(ODIR)/TestGen.o
 	$(CXX) $(CFLAGS) $(INCLUDES) -o $(BDIR)/$@ $^
+
+-include $(INCLUDES)
 
 .PHONY: depend clean
 	
