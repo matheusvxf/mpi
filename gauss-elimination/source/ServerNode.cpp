@@ -106,7 +106,7 @@ void ServerNode::Run(){
 	
 	printf("Server Running\n");
 	
-	TestRun();
+	NormalRun();
   
   MPI::COMM_WORLD.Bcast(&buffer, 1, MPI_INT, rank_); // Send message to clients to end execution
 }

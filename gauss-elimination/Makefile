@@ -1,4 +1,5 @@
 CXX=mpic++
+MKDIR_P = mkdir -p
 CFLAGS=-Wall -std=c++11 -g
 
 DEPS=Matrix.h Node.h ClientNode.h ServerNode.h Common.h TestFramework.h
@@ -21,6 +22,7 @@ OBJ = $(patsubst %, $(ODIR)/%, $(_OBJ))
 OBJS=$(_SRC:.cpp=.o)
 
 $(ODIR)/%.o:$(SDIR)/%.cpp
+	@mkdir -p $(@D)
 	$(CXX) -c $< -o $@  $(INCLUDES) $(CFLAGS)
 
 TARGET = code
@@ -30,9 +32,11 @@ TARGET_TESTGEN = testgen
 all: $(TARGET) $(TARGET_TESTGEN)
 
 $(TARGET): $(OBJ) $(ODIR)/code.o
+	@mkdir -p $(BDIR)
 	$(CXX) $(CFLAGS) $(INCLUDES) -o $(BDIR)/$@ $^ 
 
 $(TARGET_TESTGEN): $(OBJ) $(ODIR)/TestGen.o
+	@mkdir -p $(BDIR)
 	$(CXX) $(CFLAGS) $(INCLUDES) -o $(BDIR)/$@ $^
 
 -include $(INCLUDES)

@@ -43,8 +43,8 @@ protected:
   int k_max_;
   
   void Init();
-  int Tournment(int k);
   int RankOfOwner(int k);
+  int Tournment(int k);
   void SwapRows(int dst, int src);
   void RequestPivot(int k);
   void Compute(int k);
